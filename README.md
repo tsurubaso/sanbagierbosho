@@ -2,7 +2,7 @@
 
 ## 1. Stack Technique
 - **Next.js (App Router)** pour frontend + backend  
-- **Prisma + SQLite (dev)** → **Postgres** 
+- **Better-SQLite (dev)** → **Postgres** 
 - Aucun service externe obligatoire → photos hébergées en local dans `/public`, ou éventuellement GitHub (repo) pour un stockage léger  
 - **Auth.js (NextAuth)** avec Google ou GitHub pour un login admin simple  
 - **TailwindCSS + shadcn/ui** pour aller vite  
@@ -28,7 +28,7 @@
 
 ---
 
-## 3. Modèle de Base de Données (Prisma)
+## 3. Modèle de Base de Données 
 
 ### Product
 - `id`  
@@ -37,8 +37,7 @@
 - `price`  
 - `description`  
 - `imageUrl`  
-- `createdAt`  
-- `updatedAt`  
+- `createdAt`   
 
 ### User
 - `id`  
@@ -52,7 +51,7 @@
 - L’admin upload une photo  
 - Next.js sauvegarde l’image localement dans `/public/uploads`  
 - L’URL publique devient `/uploads/nom.jpg`  
-- Prisma stocke cette URL  
+- Sqlite stocke cette URL  
 - *(Option alternative : dépôt GitHub)*  
 
 ---
@@ -67,7 +66,7 @@ Bouton **“Commander”** peut rediriger vers :
 ---
 
 ## 6. Roadmap (simple et rapide)
-- **Jour 1** : Setup Next.js + Prisma + SQLite, pages produits  
+- **Jour 1** : Setup Next.js + Better-SQLite, pages produits  
 - **Jour 2** : Auth.js + sauvegarde locale des images  
 - **Jour 3** : CRUD Admin complet  
 - **Jour 4** : UI minimal propre (Tailwind + shadcn)  

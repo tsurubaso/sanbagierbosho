@@ -18,7 +18,7 @@ export default function NewProductPage() {
       const form = new FormData();
       form.append("image", image);
 
-      const uploadRes = await fetch("/api/upload", {
+      const uploadRes = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/upload`, {
         method: "POST",
         body: form,
       });
@@ -27,7 +27,7 @@ export default function NewProductPage() {
       imageUrl = data.url;
     }
 
-    await fetch("/api/products", {
+    await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/products`, {
       method: "POST",
       body: JSON.stringify({
         name,

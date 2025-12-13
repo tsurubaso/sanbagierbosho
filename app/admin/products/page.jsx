@@ -28,7 +28,7 @@ export default function AdminProductsPage() {
               <Link href={`/admin/products/${p.id}`} className="text-blue-500">Modifier</Link>
               <button
                 onClick={async () => {
-                  await fetch(`/api/products/${p.id}`, { method: "DELETE" });
+                  await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/products/${p.id}`, { method: "DELETE" });
                   setProducts(products.filter((x) => x.id !== p.id));
                 }}
                 className="text-red-500"

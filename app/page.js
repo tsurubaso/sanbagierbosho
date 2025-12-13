@@ -1,9 +1,10 @@
 import Link from "next/link";
 
 async function getProducts() {
-  const res = await fetch("/api/products", {
-    cache: "no-store",
-  });
+const res = await fetch(
+  `${process.env.NEXT_PUBLIC_APP_URL}/api/products`,
+  { cache: "no-store" }
+);
   return res.json();
 }
 

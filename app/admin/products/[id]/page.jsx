@@ -37,7 +37,7 @@ export default function EditProductPage({ params }) {
       const form = new FormData();
       form.append("image", image);
 
-      const res = await fetch("/api/upload", {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/upload`, {
         method: "POST",
         body: form,
       });
@@ -47,7 +47,7 @@ export default function EditProductPage({ params }) {
     }
 
     // Mettre à jour
-    await fetch(`/api/products/${id}`, {
+    await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/products/${id}`, {
       method: "PUT",
       body: JSON.stringify({
         name,
