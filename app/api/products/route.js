@@ -1,28 +1,51 @@
 import db from "@/lib/db.js";
 
-export async function GET() {
+export async function GET(req) {
+  const { searchParams } = new URL(req.url);
+
+  const page = parseInt(searchParams.get("page") || "1");
+  const limit = 12;
+  const offset = (page - 1) * limit;
+
+  const q = searchParams.get("q") || "";
+  const min = parseFloat(searchParams.get("min") || "0");
+  const max = parseFloat(searchParams.get("max") || "9999999");
+
+  const where = [];
+  const params = [];
+
+  if (q) {
+    where.push("name LIKE ?");
+    params.push(`%${q}%`);
+  }
+
+  where.push("price >= ?");
+  params.push(min);
+
+  where.push("price <= ?");
+  params.push(max);
+
+  const whereClause = where.length ? `WHERE ${where.join(" AND ")}` : "";
+
   const products = db
-    .prepare("SELECT * FROM products ORDER BY createdAt DESC")
-    .all();
+    .prepare(
+      `
+      SELECT *
+      FROM products
+      ${whereClause}
+      ORDER BY createdAt DESC
+      LIMIT ? OFFSET ?
+    `
+    )
+    .all(...params, limit, offset);
 
-  return Response.json(products);
-}
+  const total = db
+    .prepare(`SELECT COUNT(*) as count FROM products ${whereClause}`)
+    .get(...params).count;
 
-export async function POST(req) {
-  const body = await req.json();
-
-  const stmt = db.prepare(`
-    INSERT INTO products (name, slug, price, description, imageUrl)
-    VALUES (?, ?, ?, ?, ?)
-  `);
-
-  const result = stmt.run(
-    body.name,
-    body.slug,
-    body.price,
-    body.description || null,
-    body.imageUrl || null
-  );
-
-  return Response.json({ id: result.lastInsertRowid });
+  return Response.json({
+    products,
+    page,
+    pages: Math.ceil(total / limit),
+  });
 }
