@@ -1,24 +1,28 @@
-import { NextResponse } from "next/server";
-import prisma from "@/lib/prisma";
+import db from "@/lib/db.js";
 
 export async function GET() {
-  try {
-    const products = await prisma.product.findMany();
-    return NextResponse.json(products);
-  } catch (error) {
-    console.error("API ERROR /api/products:", error);
-    return NextResponse.json({ error: "Server error" }, { status: 500 });
-  }
+  const products = db
+    .prepare("SELECT * FROM products ORDER BY createdAt DESC")
+    .all();
+
+  return Response.json(products);
 }
 
-// provisoirement
-// POST → créer un produit
 export async function POST(req) {
   const body = await req.json();
 
-  const product = await prisma.product.create({
-    data: body,
-  });
+  const stmt = db.prepare(`
+    INSERT INTO products (name, slug, price, description, imageUrl)
+    VALUES (?, ?, ?, ?, ?)
+  `);
 
-  return NextResponse.json(product);
+  const result = stmt.run(
+    body.name,
+    body.slug,
+    body.price,
+    body.description || null,
+    body.imageUrl || null
+  );
+
+  return Response.json({ id: result.lastInsertRowid });
 }
