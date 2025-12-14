@@ -1,11 +1,24 @@
-import { getServerSession } from "next-auth";
+//import { getServerSession } from "next-auth";
 
-export default async function AdminLayout({ children }) {
-  const session = await getServerSession();
+export const metadata = {
+  title: "Admin Login",
+};
 
-  if (!session) {
-    return <div>Unauthorized</div>;
-  }
+export default async function AdminLoginLayout({ children }) {
+ // const session = await getServerSession();
+//if (!session) {  return <div>Unauthorized</div>;}
 
-  return <div className="p-6">{children}</div>;
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      {children}
+    </div>
 }
+
+
+
+
+export default function ({ children }) {
+  return (
+
+  );
+}
+

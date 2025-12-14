@@ -5,60 +5,87 @@ import { useRouter } from "next/navigation";
 
 export default function EditProductPage({ params }) {
   const router = useRouter();
-  const id = params.id;
+  const { id } = params;
 
   const [product, setProduct] = useState(null);
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
   const [desc, setDesc] = useState("");
   const [image, setImage] = useState(null);
+  const [saving, setSaving] = useState(false);
 
-  // Charger le produit existant
+  // Charger le produit
   useEffect(() => {
-    fetch(`/api/products/${id}`)
-      .then((r) => r.json())
-      .then((data) => {
+    const loadProduct = async () => {
+      try {
+        const res = await fetch(`/api/products/${id}`);
+        if (!res.ok) throw new Error("Load failed");
+
+        const data = await res.json();
         setProduct(data);
         setName(data.name);
-        setPrice(data.price);
-        setDesc(data.description);
-      });
+        setPrice(String(data.price));
+        setDesc(data.description ?? "");
+      } catch (e) {
+        alert("Impossible de charger le produit");
+        console.error(e);
+      }
+    };
+
+    loadProduct();
   }, [id]);
 
-  if (!product) return <div className="p-6">Chargement...</div>;
+  if (!product) return <div className="p-6">Chargement…</div>;
 
-  async function submit(e) {
+  const submit = async (e) => {
     e.preventDefault();
+    if (saving) return;
 
-    let imageUrl = product.imageUrl;
+    setSaving(true);
 
-    // Si nouvelle image -> upload
-    if (image) {
-      const form = new FormData();
-      form.append("image", image);
+    try {
+      let imageUrl = product.imageUrl;
 
-      const res = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/upload`, {
-        method: "POST",
-        body: form,
+      // Upload image si remplacée
+      if (image) {
+        const form = new FormData();
+        form.append("image", image);
+
+        const uploadRes = await fetch("/api/upload", {
+          method: "POST",
+          body: form,
+        });
+
+        if (!uploadRes.ok) throw new Error("Upload failed");
+
+        const uploadData = await uploadRes.json();
+        imageUrl = uploadData.url;
+      }
+
+      // Update produit
+      const res = await fetch(`/api/products/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name,
+          price: parseFloat(price),
+          description: desc,
+          imageUrl,
+        }),
       });
 
-      const data = await res.json();
-      imageUrl = data.url;
+      if (!res.ok) throw new Error("Update failed");
+
+      router.push("/admin/products");
+    } catch (e) {
+      alert("Erreur lors de l’enregistrement");
+      console.error(e);
+    } finally {
+      setSaving(false);
     }
-
-    // Mettre à jour
-    await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/products/${id}`, {
-      method: "PUT",
-      body: JSON.stringify({
-        name,
-        price: parseFloat(price),
-        description: desc,
-        imageUrl,
-      }),
-    });
-
-    router.push("/admin/products");
-  }
+  };
 
   return (
     <form onSubmit={submit} className="p-6 space-y-4">
@@ -69,6 +96,7 @@ export default function EditProductPage({ params }) {
         value={name}
         onChange={(e) => setName(e.target.value)}
         placeholder="Nom"
+        required
       />
 
       <input
@@ -78,6 +106,7 @@ export default function EditProductPage({ params }) {
         value={price}
         onChange={(e) => setPrice(e.target.value)}
         placeholder="Prix"
+        required
       />
 
       <textarea
@@ -87,7 +116,6 @@ export default function EditProductPage({ params }) {
         placeholder="Description"
       />
 
-      {/* Image actuelle */}
       {product.imageUrl && (
         <img
           src={product.imageUrl}
@@ -96,14 +124,21 @@ export default function EditProductPage({ params }) {
         />
       )}
 
-      <p className="text-sm text-gray-600">Remplacer l’image (optionnel) :</p>
+      <p className="text-sm text-gray-600">
+        Remplacer l’image (optionnel)
+      </p>
+
       <input
         type="file"
-        onChange={(e) => setImage(e.target.files[0])}
+        accept="image/*"
+        onChange={(e) => setImage(e.target.files?.[0] ?? null)}
       />
 
-      <button className="bg-blue-600 text-white px-4 py-2 rounded">
-        Enregistrer
+      <button
+        disabled={saving}
+        className="bg-blue-600 text-white px-4 py-2 rounded disabled:opacity-50"
+      >
+        {saving ? "Enregistrement…" : "Enregistrer"}
       </button>
     </form>
   );

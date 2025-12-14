@@ -1,57 +1,108 @@
 "use client";
+
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 export default function NewProductPage() {
   const router = useRouter();
+
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
   const [desc, setDesc] = useState("");
   const [image, setImage] = useState(null);
+  const [saving, setSaving] = useState(false);
 
-  async function submit(e) {
+  const submit = async (e) => {
     e.preventDefault();
+    if (saving) return;
 
-    let imageUrl = "";
+    setSaving(true);
 
-    if (image) {
-      const form = new FormData();
-      form.append("image", image);
+    try {
+      let imageUrl = "";
 
-      const uploadRes = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/upload`, {
+      // Upload image si fournie
+      if (image) {
+        const form = new FormData();
+        form.append("image", image);
+
+        const uploadRes = await fetch("/api/upload", {
+          method: "POST",
+          body: form,
+        });
+
+        if (!uploadRes.ok) throw new Error("Upload failed");
+
+        const uploadData = await uploadRes.json();
+        imageUrl = uploadData.url;
+      }
+
+      // Création produit
+      const res = await fetch("/api/products", {
         method: "POST",
-        body: form,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name,
+          price: parseFloat(price),
+          description: desc,
+          imageUrl,
+        }),
       });
 
-      const data = await uploadRes.json();
-      imageUrl = data.url;
+      if (!res.ok) throw new Error("Create failed");
+
+      router.push("/admin/products");
+    } catch (e) {
+      alert("Erreur lors de la création du produit");
+      console.error(e);
+    } finally {
+      setSaving(false);
     }
-
-    await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/products`, {
-      method: "POST",
-      body: JSON.stringify({
-        name,
-        price: parseFloat(price),
-        description: desc,
-        imageUrl,
-      }),
-    });
-
-    router.push("/admin/products");
-  }
+  };
 
   return (
     <form onSubmit={submit} className="p-6 space-y-4">
       <h1 className="text-2xl font-bold">Nouveau produit</h1>
 
-      <input className="border p-2 w-full" placeholder="Nom" value={name} onChange={(e) => setName(e.target.value)} />
-      <input className="border p-2 w-full" type="number" placeholder="Prix" value={price} onChange={(e) => setPrice(e.target.value)} />
-      <textarea className="border p-2 w-full" placeholder="Description" value={desc} onChange={(e) => setDesc(e.target.value)} />
+      <input
+        className="border p-2 w-full"
+        placeholder="Nom"
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+        required
+      />
 
-      {/* Champ Upload */}
-      <input type="file" onChange={(e) => setImage(e.target.files[0])} />
+      <input
+        className="border p-2 w-full"
+        type="number"
+        step="0.01"
+        placeholder="Prix"
+        value={price}
+        onChange={(e) => setPrice(e.target.value)}
+        required
+      />
 
-      <button className="bg-green-600 text-white px-4 py-2 rounded">Créer</button>
+      <textarea
+        className="border p-2 w-full"
+        placeholder="Description"
+        value={desc}
+        onChange={(e) => setDesc(e.target.value)}
+      />
+
+      <input
+        type="file"
+        accept="image/*"
+        onChange={(e) => setImage(e.target.files?.[0] ?? null)}
+      />
+
+      <button
+        disabled={saving}
+        className="bg-green-600 text-white px-4 py-2 rounded disabled:opacity-50"
+      >
+        {saving ? "Création…" : "Créer"}
+      </button>
     </form>
   );
 }
