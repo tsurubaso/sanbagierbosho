@@ -24,10 +24,12 @@ export default function AdminProductsPage() {
   }, []);
 
   const deleteProduct = async (id) => {
-    if (!confirm("Supprimer ce produit ?")) return;
+
+        // ✅ demande de confirmation avant suppression
+    if (!confirm("Voulez-vous vraiment supprimer ce produit ?")) return;
 
     try {
-      const res = await fetch(`/api/products/${id}`, {
+      const res = await fetch(`/api/products/delete/${id}`, {
         method: "DELETE",
       });
 
