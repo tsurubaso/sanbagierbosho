@@ -24,7 +24,7 @@ export default function AdminProductsPage() {
   }, []);
 
   const deleteProduct = async (id) => {
-
+console.log("Delete product", id);
         // ✅ demande de confirmation avant suppression
     if (!confirm("Voulez-vous vraiment supprimer ce produit ?")) return;
 
