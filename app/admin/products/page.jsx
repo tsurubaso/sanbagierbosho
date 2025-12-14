@@ -24,7 +24,8 @@ export default function AdminProductsPage() {
   }, []);
 
   const deleteProduct = async (id) => {
-console.log("Delete product", id);
+
+console.log("Delete product, ultimate check", id);
         // ✅ demande de confirmation avant suppression
     if (!confirm("Voulez-vous vraiment supprimer ce produit ?")) return;
 
@@ -33,7 +34,11 @@ console.log("Delete product", id);
         method: "DELETE",
       });
 
+      const data = await res.json();
       if (!res.ok) throw new Error("Delete failed");
+      
+      console.log("Deleted:", data);
+      // Met à jour la liste des produits après suppression
 
       setProducts((prev) => prev.filter((p) => p.id !== id));
     } catch (e) {
@@ -57,19 +62,21 @@ console.log("Delete product", id);
 
       <ul className="mt-4 space-y-2">
         {products.map((p) => (
+          
           <li key={p.id} className="p-3 border rounded">
             <div className="font-semibold">{p.name}</div>
             <div>{p.price} €</div>
 
             <div className="flex gap-3 mt-2">
               <Link
-                href={`/admin/products/${p.id}`}
+                href={`/admin/products/edit/${p.id}`}
                 className="text-blue-500"
               >
                 Modifier
               </Link>
 
               <button
+              
                 onClick={() => deleteProduct(p.id)}
                 className="text-red-500"
               >
