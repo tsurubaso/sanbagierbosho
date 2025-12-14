@@ -16,9 +16,3 @@ export default async function AdminLoginLayout({ children }) {
 
 
 
-export default function ({ children }) {
-  return (
-
-  );
-}
-

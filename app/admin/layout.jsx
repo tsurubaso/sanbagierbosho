@@ -1,4 +1,5 @@
 import AdminLayout from "@/components/AdminLayout";
+
 // import { getServerSession } from "next-auth";
 // import { redirect } from "next/navigation";
 // import { authOptions } from "../api/auth/[...nextauth]/route";
@@ -16,5 +17,5 @@ export default async function AdminRootLayout({ children }) {
   }
   */
 
-  return <AdminLayout>{children}</AdminLayout>;
+  return <><AdminLayout>{children}</AdminLayout></>;
 }
