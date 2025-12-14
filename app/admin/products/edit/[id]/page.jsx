@@ -1,5 +1,5 @@
 import db from "@/lib/db";
-import ProductForm from "@/components/ProductForm";
+import EditForm from "@//components/EditForm";
 
 export default async function EditProductPage({ params }) {
   const { id } = await params;
@@ -13,9 +13,9 @@ export default async function EditProductPage({ params }) {
   }
 
   return (
-    <ProductForm
-      mode="edit"
-      initialData={product}
-    />
+    <div className="p-6 max-w-xl">
+      <h1 className="text-2xl mb-4">Modifier le produit</h1>
+      <EditForm product={product} />
+    </div>
   );
 }
