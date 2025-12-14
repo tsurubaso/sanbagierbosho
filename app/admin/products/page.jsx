@@ -12,7 +12,7 @@ export default function AdminProductsPage() {
       try {
         const res = await fetch("/api/products");
         const data = await res.json();
-        setProducts(data);
+        setProducts(data.products);
       } catch (e) {
         console.error("Erreur chargement produits", e);
       } finally {
