@@ -32,6 +32,7 @@ export default function NewProductPage() {
               router.push("/admin/products");
             }}
           />
+          
         </div>
       </div>
     </main>

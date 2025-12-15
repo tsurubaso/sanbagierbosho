@@ -13,7 +13,7 @@ export default async function EditProductPage({ params }) {
   }
 
   return (
-    <div className="p-6 max-w-xl">
+    <div className="p-6 text-gray-400 max-w-xl">
       <h1 className="text-2xl mb-4">Modifier le produit</h1>
       <EditForm product={product} />
     </div>
