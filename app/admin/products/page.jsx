@@ -48,44 +48,92 @@ console.log("Delete product, ultimate check", id);
   };
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">Produits</h1>
+    <main className="min-h-screen bg-gray-50 p-8">
+      <div className="max-w-4xl mx-auto space-y-8">
+        {/* HEADER */}
+        <header className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-semibold tracking-tight">
+              Produits
+            </h1>
+            <p className="text-gray-600 mt-1">
+              Gérer les produits de la boutique
+            </p>
+          </div>
 
-      <Link
-        href="/admin/products/new"
-        className="inline-block bg-blue-500 text-white px-3 py-1 rounded"
-      >
-        + Nouveau produit
-      </Link>
+          <Link
+            href="/admin/products/new"
+            className="
+              inline-flex items-center
+              px-5 py-2.5
+              rounded-xl
+              bg-black text-white
+              font-medium
+              transition
+              hover:bg-gray-900
+            "
+          >
+            + Nouveau produit
+          </Link>
+        </header>
 
-      {loading && <p className="mt-4">Chargement…</p>}
+        {/* LOADING */}
+        {loading && (
+          <p className="text-gray-500">Chargement…</p>
+        )}
 
-      <ul className="mt-4 space-y-2">
-        {products.map((p) => (
-          
-          <li key={p.id} className="p-3 border rounded">
-            <div className="font-semibold">{p.name}</div>
-            <div>{p.price} €</div>
+        {/* LIST */}
+        <ul className="space-y-4">
+          {products.map((p) => (
+            <li
+              key={p.id}
+              className="
+                bg-white
+                border
+                rounded-2xl
+                p-5
+                flex
+                items-center
+                justify-between
+                shadow-sm
+              "
+            >
+              {/* PRODUCT INFO */}
+              <div className="space-y-1">
+                <p className="font-medium text-lg">{p.name}</p>
+                <p className="text-gray-600">{p.price} €</p>
+              </div>
 
-            <div className="flex gap-3 mt-2">
-              <Link
-                href={`/admin/products/edit/${p.id}`}
-                className="text-blue-500"
-              >
-                Modifier
-              </Link>
+              {/* ACTIONS */}
+              <div className="flex items-center gap-4">
+                <Link
+                  href={`/admin/products/edit/${p.id}`}
+                  className="
+                    text-sm
+                    text-gray-700
+                    hover:text-black
+                    underline-offset-4
+                    hover:underline
+                  "
+                >
+                  Modifier
+                </Link>
 
-              <button
-              
-                onClick={() => deleteProduct(p.id)}
-                className="text-red-500"
-              >
-                Supprimer
-              </button>
-            </div>
-          </li>
-        ))}
-      </ul>
-    </div>
+                <button
+                  onClick={() => deleteProduct(p.id)}
+                  className="
+                    text-sm
+                    text-red-600
+                    hover:text-red-800
+                  "
+                >
+                  Supprimer
+                </button>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </main>
   );
 }

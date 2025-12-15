@@ -59,16 +59,42 @@ export default function ProductForm({ initialProduct, onSubmit, submitLabel = "E
         onChange={(e) => setDesc(e.target.value)}
         placeholder="Description"
       />
-      {initialProduct?.imageUrl && (
-        <img src={initialProduct.imageUrl} alt="Produit" className="w-40 h-40 object-cover rounded" />
+      {/* Image preview */}
+      {initialProduct?.imageUrl && !image && (
+        <img
+          src={initialProduct.imageUrl}
+          alt="Produit"
+          className="w-40 h-40 object-cover rounded border"
+        />
       )}
-      <input type="file" accept="image/*" onChange={(e) => setImage(e.target.files?.[0] ?? null)} />
-      <button
-        disabled={saving}
-        className="bg-blue-600 text-white px-4 py-2 rounded disabled:opacity-50"
+
+      {image && (
+        <img
+          src={URL.createObjectURL(image)}
+          alt="Preview"
+          className="w-40 h-40 object-cover rounded border"
+        />
+      )}
+
+      {/* Hidden file input */}
+      <input
+        type="file"
+        accept="image/*"
+        id="image-upload"
+        className="hidden"
+        onChange={(e) => setImage(e.target.files?.[0] ?? null)}
+      />
+
+      {/* Custom button */}
+      <label
+        htmlFor="image-upload"
+        className="inline-flex items-center gap-2 cursor-pointer
+             border border-dashed rounded-lg px-4 py-3
+             text-gray-600 hover:text-black hover:border-black
+             transition"
       >
-        {saving ? "Enregistrement…" : submitLabel}
-      </button>
+        Choisir une image
+      </label>
     </form>
   );
 }
