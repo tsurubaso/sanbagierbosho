@@ -29,7 +29,7 @@ export default function EditForm({ product }) {
   return (
     <form className="space-y-4" onSubmit={handleSubmit}>
       <input className="border p-2 w-full" value={name} onChange={e => setName(e.target.value)} />
-      <input className="border p-2 w-full bg-gray-100" value={product.slug} disabled />
+      <input className="border p-2 w-full " value={product.slug} disabled />
       <input className="border p-2 w-full" type="number" value={price} onChange={e => setPrice(e.target.value)} />
       <input className="border p-2 w-full" value={imageUrl} onChange={e => setImageUrl(e.target.value)} />
       <textarea className="border p-2 w-full" value={description} onChange={e => setDescription(e.target.value)} />
